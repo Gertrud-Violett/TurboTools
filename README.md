@@ -55,7 +55,7 @@ Thrust Calculation Tool
 ### input
 * input.csv:
   Input measured data: pressure, temps etc.
-*settings.ini:
+* settings.ini:
   Geometry Settings on impeller and turbine
 ### output
 * geom.json:
@@ -65,7 +65,7 @@ Thrust Calculation Tool
 
 ## Turbine Map Plot
 Simple Turinbe Map Plotting Tool. Notebook format.
-*TurbineMapPlot.ipynb:
+* TurbineMapPlot.ipynb:
   Main
 
 ### GridMap_Plot
