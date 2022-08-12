@@ -63,12 +63,12 @@ Thrust Calculation Tool
 
 ***
 
-##Turbine Map Plot
+## Turbine Map Plot
 Simple Turinbe Map Plotting Tool. Notebook format.
 *TurbineMapPlot.ipynb:
   Main
 
-###GridMap_Plot
+### GridMap_Plot
 Turbine Map Plotting Tool for Variable Geometry Turbine. Notebook format.
 
 ***
