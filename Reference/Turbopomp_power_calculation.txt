@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Mar 13 18:09:33 2020
+
+@author: User
+"""
+
+from math import*
+from numpy import*
+from matplotlib.pyplot import*
+import xlrd
+import configparser
+import csv
+import sys
+
+from CEA_multifuel_modify import *
+
+
+
+
+
+def Turbopomp_power_calculation(g,dot_m_F,dot_m_O,P_GG_center,dot_m_GG,T_GG,Cp_GG,P_OT,gamma_GG,dH_F,dH_O,eta_pf,eta_po,eta_t):
+    
+    dH_t=Cp_GG*T_GG*(1-(P_OT/P_GG_center)**((gamma_GG-1)/gamma_GG))
+    
+    L_PO=g*dot_m_O*dH_O/eta_po
+    L_PF=g*dot_m_F*dH_F/eta_pf
+    L_t=dot_m_GG*eta_t*dH_t
+
+    return L_PF,L_PO,L_t
+

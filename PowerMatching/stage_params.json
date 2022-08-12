@@ -1,0 +1,55 @@
+{
+	"Compressor1":{
+		"SplNo": "1", 
+		"deltaT": "0.0", 
+		"deltaP": "0.0"
+	},
+
+	"Compressor2":{
+		"SplNo": "2", 
+		"deltaT": "0.0", 
+		"deltaP": "0.0"
+	},
+
+	"Compressor3":{
+		"SplNo": "3", 
+		"deltaT": "0.0", 
+		"deltaP": "0.0"
+	},
+
+	"Combustor":{
+		"N2MF": "0.66",
+		"O2MF": "0.10",
+		"CO2MF": "0.12",
+		"COMF": "0.0",
+		"H2OMF": "0.11",
+		"ARMF": "0.01"
+	},
+
+	"Turbine1":{
+		"SplNo": "1"
+	},		
+
+	"Turbine2":{
+		"SplNo": "2"
+	},
+	
+	"Turbine3":{
+		"SplNo": "3"
+	},
+	
+	"Spool1":{
+		"Inertia": "0.0",
+		"Ncinit": "60000"
+	},	
+
+	"Spool2":{
+		"Inertia": "0.0",
+		"Ncinit": "0"
+	},	
+
+	"Spool3":{
+		"Inertia": "0.0",
+		"Ncinit": "0"
+	}
+}

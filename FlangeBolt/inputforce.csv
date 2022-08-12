@@ -1,0 +1,5 @@
+Datnum,TS,Location,,,Rotation,,,Forces,,,Moments,,
+1,s,mm,mm,mm,deg,deg,deg,N,N,N,Nm,Nm,Nm
+Sr,Time,X,Y,Z,Rx,Ry,Rz,Fx,Fy,Fz,Mx,My,Mz
+1,1,,,,,,,,,,,,
+2,2,,,,,,,,,,,,
