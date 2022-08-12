@@ -1,0 +1,27 @@
+[Compressor]
+Weight = 0.1 #kg
+Inertia = 0.1 #kgm2
+Cp = 1.2 #J/kgK
+gamma = 1.4
+Flow = 1.0 #kg/s
+PRC = 4.0 #Pressure Ratio
+
+
+[Turbine]
+Weight = 0.1 #kg
+Inertia = 0.1 #kgm2
+Cp = 1.2 #K/kgK
+gamma = 1.4
+
+
+[Shaft]
+Weight = 0.1 #kg
+Inertia = 0.1 #kgm2
+Step = 100 #rpm resolution for calculation
+
+[Combustor]
+CombustionTemp_T1t = 1000 #degC
+CombustordeltaP= 0.1 #Ratio Inlet Pres.
+AirFuelRatio = 20 #kg/kg
+FuelLatentHeatLHV = 38 #MJ/kg
+

@@ -1,0 +1,11 @@
+{
+	"Compressor1":{
+		"SplNo": "1", 
+		"Inertia":"",
+	},
+
+	"Turbine1":{
+		"SplNo": "1"
+	},		
+
+}
