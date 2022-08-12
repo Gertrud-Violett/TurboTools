@@ -3,13 +3,13 @@ Turbo Compressor Design Tools
 MIT License.
 ***
 
-##Compressor Map Plot
+## Compressor Map Plot
 Simple Centrifugal Compressor Mapping Tool
 *CompressorMapPlot.ipynb:
   Main
 ***
 
-##Flange Bolt
+## Flange Bolt
 Flange Bolt Stress Analysis Tool (WIP)
 *inputforce.csv: 
   Input force history
@@ -19,13 +19,13 @@ Flange Bolt Stress Analysis Tool (WIP)
   Geometrical Settings
 ***
 
-##PerformanceTestPlotting
+## PerformanceTestPlotting
 Performance Test Plotting Tools
 *LPT_Data_Analysis.ipyn:
  Gas Stand data analysis tool including thrust and LPT test.
 
 
-##Power Matching (WIP)
+## Power Matching (WIP)
 Multi-Stage Compressor and Gas Turbine Power Matching Tool
 
 *MultiStage_Matching.py:
@@ -34,30 +34,30 @@ Multi-Stage Compressor and Gas Turbine Power Matching Tool
   NIST Gas Prop Table
 *stage_params.json:
   Each Stage parameters
-###NIST_Table:
+### NIST_Table:
  Gas Table raw datas
-###WheelMap:
+### WheelMap:
  Impeller and turbine performance maps
 ***
 
-##Transient Matching (WIP)
+## Transient Matching (WIP)
 Single Stage Turbocharger Inertia Transient Operation Matching Tool
 ***
 
-##ROSS
+## ROSS
 Customized ROSS Script for Turbo Compressor. Refer to ROSS for details.
 ***
 
-##Thrust Balance
+## Thrust Balance
 Thrust Calculation Tool
 *ThrustCalculator.py:
   Main
-###input
+### input
 *input.csv:
   Input measured data: pressure, temps etc.
 *settings.ini:
   Geometry Settings on impeller and turbine
-###output
+### output
 *geom.json:
   output json file for geometry based on settings.ini
 
