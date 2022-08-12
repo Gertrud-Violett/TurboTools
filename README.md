@@ -26,8 +26,18 @@ Performance Test Plotting Tools
 
 
 ## Power Matching (WIP)
-Multi-Stage Compressor and Gas Turbine Power Matching Tool
+### TransientSingleStage: Single Stage Transient Matching Tool
+* SingleStage_Matching.py: 
+Main
+* Result.out:
+Output file
+#### Inputs: 
+* cmap_n.csv: compressor map for nth stage
+* tmap_n.csv: turbine map for nth stage
+* params.toml: Calculation conditions
+* setup.ini: calculation conditions
 
+### MultiStage: Multi Stage Compressor and Gas Turbine Power Matching Tool
 * MultiStage_Matching.py:
   Main Script
 * GasTable.py:
