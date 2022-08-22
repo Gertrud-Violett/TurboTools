@@ -3,8 +3,9 @@ Weight = 0.1 #kg
 Inertia = 0.1 #kgm2
 Cp = 1.2 #J/kgK
 gamma = 1.4
-Flow = 1.0 #kg/s
-PRC = 4.0 #Pressure Ratio
+Flow = 1.0 #kg/s Flow Target
+PRC = 4.0 #Pressure Ratio Target
+BleedRatio = 0 #Ratio of compressor flow bleed
 
 
 [Turbine]
@@ -12,16 +13,19 @@ Weight = 0.1 #kg
 Inertia = 0.1 #kgm2
 Cp = 1.2 #K/kgK
 gamma = 1.4
-
+BackPressure = 40 #Turbine outlet backpressure [kPa/(kg/s)]
+BleedRatio = 0 #Ratio of turbine flow bleed
 
 [Shaft]
 Weight = 0.1 #kg
 Inertia = 0.1 #kgm2
-Step = 100 #rpm resolution for calculation
 
 [Combustor]
 CombustionTemp_T1t = 1000 #degC
-CombustordeltaP= 0.1 #Ratio Inlet Pres.
+CombustordeltaP= 0.1 #Ratio Inlet Pres.loss
 AirFuelRatio = 20 #kg/kg
 FuelLatentHeatLHV = 38 #MJ/kg
 
+[Calculation]
+Step = 100 #rpm resolution for calculation
+PowRes = 5 #Target Power Resolution [kW]

@@ -5,7 +5,8 @@
 	},
 
 	"Turbine1":{
-		"SplNo": "1"
+		"SplNo": "1",
+		"Inertia":"",
 	},		
 
 }
