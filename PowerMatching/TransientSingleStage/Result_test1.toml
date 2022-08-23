@@ -1,0 +1,21 @@
+[Compressor]
+"Power[kW]" = 28.86590535093315
+rpm = 113400.0
+"Outlet Pres" = 299.4189425074127
+"Outlet Temp" = 170.8590134280821
+PRC = 2.9941894250741266
+Efficiency = 0.7432083620250619
+"Air Flow[kg/s]" = 0.2
+"Turbine Pressure Ratio" = 1.0526315789473684
+
+[Turbine]
+"Power[kW]" = 38.767705605420545
+rpm = 113400.0
+"Inlet Pres.[kPa]" = 284.44799538204205
+"Inlet Temp[K]" = 1273.15
+"Outlet Pres[kPa]" = 110.0
+"Outlet Temp[K]" = 845.468106433576
+PRT = 2.585890867109473
+Efficiency = 0.5110057983563827
+"Turbine Flow[kg/s]" = 0.21000000000000002
+"Bypass Ratio" = 0.25541362584797683
