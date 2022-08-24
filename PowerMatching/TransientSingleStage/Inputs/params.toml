@@ -2,14 +2,14 @@
 Weight = 0.1 #kg
 Inertia = 0.1 #kgm2
 gamma = 1.395
-Flow = 0.2 #kg/s Flow Target
-PRC = 3.0 #Pressure Ratio Target
-BleedRatio = 0 #Ratio of compressor flow bleed
+Flow = 0.8 #kg/s Flow Target
+PRC = 5.0 #Pressure Ratio Target
+BleedRatio = 0.4 #Ratio of compressor flow bleed
 
 [Combustor]
-CombustionTemp_T1t = 1000 #degC
+CombustionTemp_T1t = 1300 #degC
 CombustordeltaP= 0.05 #Ratio Inlet Pres.loss
-AirFuelRatio = 20 #kg/kg
+AirFuelRatio = 30 #kg/kg
 FuelLatentHeatLHV = 38 #MJ/kg
 
 [Turbine]
@@ -25,4 +25,5 @@ MechLoss = 0.05 #Mechanical Power Loss %
 
 [Calculation]
 Step = 100 #rpm resolution for calculation
-PowRes = 5 #Target Power Resolution [kW]
+PowRes = 10 #Target Power Resolution [kW]
+PRCRes = 0.02 #PRC Resolution
