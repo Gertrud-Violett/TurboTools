@@ -48,20 +48,15 @@ whirlfig = px.scatter(x=modal.wn, y=modal.whirl_values(), title="Whirl Direction
 whirlfig.show()
 whirlfig.write_html("./output/whirlfig_pic.html")
 
-mode = 3
-modeplot3 = modal.plot_mode_2d(mode)
-modeplot3d3 = modal.plot_mode_3d(mode)
-modeplot3d3.show()
-modeplot3.write_html("./output/mode2d_mode"+str(mode)+".html")
-modeplot3d3.write_html("./output/mode3d_mode"+str(mode)+".html")
+mode = 1
+while mode < 6:
+	modeplot3 = modal.plot_mode_2d(mode)
+	modeplot3d3 = modal.plot_mode_3d(mode)
+	modeplot3d3.show()
+	modeplot3.write_html("./output/mode2d_mode"+str(mode)+".html")
+	modeplot3d3.write_html("./output/mode3d_mode"+str(mode)+".html")
+	mode = mode +1
 
-mode = 4
-modeplot = modal.plot_mode_2d(mode)
-modeplot3d = modal.plot_mode_3d(mode)
-modeplot.show()
-modeplot3d.show()
-modeplot.write_html("./output/mode2d_mode"+str(mode)+".html")
-modeplot3d.write_html("./output/mode3d_mode"+str(mode)+".html")
 
 
 #1.3 Campbell Plot===========================================================
@@ -89,7 +84,7 @@ freqplot.write_html("./output/freqplot_pic.html")
 unbalnodes = [1,20] #Node no.
 amps = [0.0001,0.0001] #Amplitude
 phase = [0,np.pi*0.5] #Phase in radians
-ubspeed = 1098 #in rad/s
+ubspeed = 1908 #in rad/s
 frequency_range=np.linspace(0, ubspeed, 100)
 
 ubalres = rotor.run_unbalance_response(unbalnodes, amps, phase, frequency_range)
@@ -133,8 +128,9 @@ timeres3.write_html("./output/timeres3_pic.html")
 
 
 #1.7 UCS Undamped Critical Speed Map==============================================
-stiff_range = (6, 11)  #10e6 to 10e11 N/m shown as 6,11
+stiff_range = (3, 11)  #10e6 to 10e11 N/m shown as 6,11
 ucs_results = rotor.run_ucs(stiffness_range=stiff_range, num=20, num_modes=16, frequency_units="RPM")
 ucs_fig = ucs_results.plot()
 ucs_fig.show()
+ucs_fig.write_html("./output/ucs_fig.html")
 
