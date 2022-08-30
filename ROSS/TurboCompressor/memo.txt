@@ -1,7 +1,0 @@
-bearing_seal:
-disk:
-main:
-materials:done
-pointmass:
-rotor:
-shaft: wip
