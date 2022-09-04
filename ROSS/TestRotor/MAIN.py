@@ -75,7 +75,7 @@ rotorfig3.write_html("./output/rotor3_pic.html")
 
 
 #Save & Load ROTOR==========================================================
-rotor3.save('rotor3.toml')
+#rotor3.save('rotor3.toml')
 #rotor3_1 = rs.Rotor.load('rotor3.toml')
 #rotor3_1 == rotor3
 #use excel2x
@@ -98,50 +98,51 @@ print()
 print(f"Damped natural frequencies:\n {modal.wd}")
 #print()
 #print(f"Damping ratio for each mode:\n {modal.damping_ratio}")
-mode = 5
-modeplot1 = modal.plot_mode_3d(mode)
-modeplot1.show()
-modeplot1.write_html("./output/mode3d_pic.html")
+
+mode = 1
+while mode < 6:
+    modeplot3 = modal.plot_mode_2d(mode)
+    modeplot3d3 = modal.plot_mode_3d(mode)
+    modeplot3d3.show()
+    modeplot3.write_html("./output/mode2d_mode"+str(mode)+".html")
+    modeplot3d3.write_html("./output/mode3d_mode"+str(mode)+".html")
+    mode = mode +1
+print("Done 1.2 Modal")
+
 
 #1.3 Campbell Plot===========================================================
 samples = 31
 speed_range = np.linspace(0, 1100, samples)
 campbell = rotor3.run_campbell(speed_range)
 campbell3 = campbell.plot(harmonics=[1.0,2.0,3.0], frequency_units="RPM")
-campbell3.show()
+#campbell3.show()
 campbell3.write_html("./output/campbell3_pic.html")
+print("Done 1.3 Campbell")
 
 #1.4 Frequency Response======================================================
-nodenum = 43
+nodenum = 27
 localdof = 1  #(x=0,y=1,alpha=2,beta=3)
 bodeindex = nodenum*4+localdof
-speed_range = np.linspace(315, 1150, 31) # rads/s, samples
+speed_range = np.linspace(30, 1150, 31) # rads/s, samples
 results3 = rotor3.run_freq_response(speed_range=speed_range)
 freqplot = results3.plot(inp=bodeindex, out=bodeindex,frequency_units="RPM")
-freqplot.show()
+#freqplot.show()
+freqplot.write_html("./output/freqplot3_pic.html")
+print("Done 1.4 Frequency Reponse")
 
-#1.5 Unbalance Response=======================================================
-unbalnodes = [29, 33] #Node no.
-amps = [0.003,0.002] #Amplitude
-phase = [0,0] #Phase
+#1.7 UCS Undamped Critical Speed Map==============================================
+stiff_range = (5, 11)  #10e6 to 10e11 N/m shown as 6,11
+ucs_results = rotor3.run_ucs(stiffness_range=stiff_range, num=20, num_modes=16)
+ucs_fig = ucs_results.plot()
+#ucs_fig.show()
+ucs_fig.write_html("./output/ucs_fig.html")
+print("Done 1.7 UCS")
 
-frequency_range=np.linspace(315, 1150, 101)
-results2 = rotor3.run_unbalance_response(unbalnodes, amps, phase, frequency_range)
-
-# probe = (probe_node, probe_orientation)
-probe1 = (15, 45) # node 15, orientation 45º
-probe2 = (35, 45) # node 35, orientation 45º
-
-unbalplot = results2.plot(probe=[probe1, probe2], probe_units="degrees",frequency_units="RPM")
-unbalplot.show()
-
-unbalshape = results2.plot_deflected_shape(speed=649,frequency_units="RPM")
-unbalshape.show()
 
 #1.6 Time response external force===============================================
 speed = 100*2*np.pi #rad/s
 time_samples = 1000
-node = 26
+node = 27
 t = np.linspace(0, 1, time_samples)
 F = np.zeros((time_samples, rotor3.ndof))  #No DoF is rotor3
 # component on direction x
@@ -155,17 +156,35 @@ probe2 = (3, 90)  # node 3, orientation 90°(Y dir.)
 timeres1 = response3.plot_1d(probe=[probe1, probe2], probe_units="degree")
 timeres2 = response3.plot_2d(node=node)
 timeres3 = response3.plot_3d()
-timeres1.show()
-timeres2.show()
-timeres3.show()
+#timeres1.show()
+#timeres2.show()
+#timeres3.show()
 timeres1.write_html("./output/timeres1_pic.html")
 timeres2.write_html("./output/timeres2_pic.html")
 timeres3.write_html("./output/timeres3_pic.html")
+print("Done 1.6 Time Reponse")
 
 
-#1.7 UCS Undamped Critical Speed Map==============================================
-stiff_range = (6, 11)  #10e6 to 10e11 N/m shown as 6,11
-ucs_results = rotor3.run_ucs(stiffness_range=stiff_range, num=20, num_modes=16)
-ucs_fig = ucs_results.plot()
-ucs_fig.show()
-ucs_fig.write_html("./output/ucs_fig.html")
+#1.5 Unbalance Response=======================================================
+unbalnodes = [29, 33] #Node no.
+amps = [0.003,0.002] #Amplitude
+phase = [0,0] #Phase
+
+frequency_range=np.linspace(50, 1150, 100)
+results2 = rotor3.run_unbalance_response(unbalnodes, amps, phase, frequency_range)
+
+# probe = (probe_node, probe_orientation)
+probe1 = (15, 45) # node 15, orientation 45º
+probe2 = (35, 45) # node 35, orientation 45º
+probe3 = (27, 45) # node 27, orientation 45º
+
+
+unbalplot = results2.plot(probe=[probe1, probe2, probe3], probe_units="degrees",frequency_units="RPM")
+#unbalplot.show()
+unbalplot.write_html("./output/ubal3_pic.html")
+
+
+unbalshape = results2.plot_deflected_shape(speed=550,frequency_units="RPM")
+#unbalshape.show()
+unbalshape.write_html("./output/ubal3shape_pic.html")
+print("Done 1.5 unbalance response")
