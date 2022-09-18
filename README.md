@@ -6,19 +6,20 @@ MIT License.
 ## ROSS
 ROSS Sample Scripts for Tutorial
 Refer to blog for detailed usage
+***
 
-##Power Matching
+## Power Matching
 Turbo Compressor Matching Tool
 
 ### Inputs
 Contains input .ini and toml data
-####cmap_n.csv
+#### cmap_n.csv
 Compressor Map for nth stage: e.b. cmap_1.csv for 1st stage
 
-####tmap_n.csv
+#### tmap_n.csv
 Turbine Map for nth stage: e.b. cmap_1.csv for 1st stage
 
-####setup.ini
+#### setup.ini
 Setting file for whole calculation
 [Settings]
 Initial rpm: Used to set initail rpm. Range must be within cmap min./max
@@ -30,7 +31,7 @@ Matching Mode (Bypass or AFR): Matching mode, Bypass mode sets bypass turbine fl
 humidity [0-1]: use 0 as default, dry air
 
 
-####params_n.toml
+#### params_n.toml
 Calculation parameters for nth stage: e.g. params_1.toml for 1st stage
 Sample values are shown
 
@@ -68,7 +69,7 @@ PowRes = 3 #Target Power Resolution for calculation convergence[kW]
 PRCRes = 0.01 #PRC Resolution for calculation convergence
 WtRes = 0.1 #Wt* Resolution for calculation convergence
 
-###Outputs
+### Outputs
 Contains output toml data. Sample values are shown
 #### Result_AFR_Analysis name.toml
 Output result for AFR mode
