@@ -12,20 +12,21 @@ Refer to blog for detailed usage
 Turbo Compressor Matching Tool
 
 ### Inputs
-Contains input .ini and toml data
+Contains input .ini and toml data\
 #### cmap_n.csv
-Compressor Map for nth stage: e.b. cmap_1.csv for 1st stage
+Compressor Map for nth stage: e.b. cmap_1.csv for 1st stage\
 
 #### tmap_n.csv
-Turbine Map for nth stage: e.b. cmap_1.csv for 1st stage
+Turbine Map for nth stage: e.b. cmap_1.csv for 1st stage\
 
 #### setup.ini
-Setting file for whole calculation
-[Settings]
-Initial rpm: Used to set initail rpm. Range must be within cmap min./max
-Analysis Name: any name can be used.
-Input filename: .toml input file name
-Matching Mode (Bypass or AFR): Matching mode, Bypass mode sets bypass turbine flow. AFR automatically sets required turbine inlet temp AFR.
+Setting file for whole calculation\
+
+[Settings]\
+Initial rpm: Used to set initail rpm. Range must be within cmap min./max\
+Analysis Name: any name can be used.\
+Input filename: .toml input file name\
+Matching Mode (Bypass or AFR): Matching mode, Bypass mode sets bypass turbine flow. AFR automatically sets required turbine inlet temp AFR.\
 
 [Environment Variables]
 humidity [0-1]: use 0 as default, dry air
@@ -47,13 +48,18 @@ BleedRatio = 0.1 #Ratio of compressor flow bleed
 
 [Combustor]
 CombustionTemp_T1t = 1473 #Combustion Temp in K
+
 CombustordeltaP= 0.1 #Ratio Inlet Pres.loss
+
 AirFuelRatio = 40 #kg/kg
+
 FuelLatentHeatLHV = 38 #MJ/kg for lower fuel heating value
+
 TempEfficiency = 1.0 #Actual Temp vs Theoretical Temp
 
 [Turbine]
 Weight = 0.1 #kg
+
 Inertia = 0.1 #kgm2
 BackPressure = 110 #Turbine outlet Initial backpressure [kPaA] Static Pressure: Overwritten by calcualtion. Delta can be used a dynamic pressure
 BleedRatio = 0.0 #Ratio of turbine flow bleed
