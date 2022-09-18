@@ -28,15 +28,15 @@ Analysis Name: any name can be used.\
 Input filename: .toml input file name\
 Matching Mode (Bypass or AFR): Matching mode, Bypass mode sets bypass turbine flow. AFR automatically sets required turbine inlet temp AFR.\
 
-[Environment Variables]
-humidity [0-1]: use 0 as default, dry air
+[Environment Variables]\
+humidity [0-1]: use 0 as default, dry air\
 
 
 #### params_n.toml
 Calculation parameters for nth stage: e.g. params_1.toml for 1st stage.
 Sample values are shown
 
-[Compressor]
+[Compressor]\
 AmbientPressure = 100 #Inlet Pressure [kPaA] Total Pressure\
 AmbientTemperature = 298 #Inlet Temperature in K\
 Weight = 0.1 #kg\
@@ -46,25 +46,25 @@ Flow = 0.8 #kg/s Flow Target\
 PRC = 5.0 #Pressure Ratio Target\
 BleedRatio = 0.1 #Ratio of compressor flow bleed\
 
-[Combustor]
+[Combustor]\
 CombustionTemp_T1t = 1473 #Combustion Temp in K\
 CombustordeltaP= 0.1 #Ratio Inlet Pres.loss\
 AirFuelRatio = 40 #kg/kg\
 FuelLatentHeatLHV = 38 #MJ/kg for lower fuel heating value\
 TempEfficiency = 1.0 #Actual Temp vs Theoretical Temp\
 
-[Turbine]
+[Turbine]\
 Weight = 0.1 #kg\
 Inertia = 0.1 #kgm2\
 BackPressure = 110 #Turbine outlet Initial backpressure [kPaA] Static Pressure: Overwritten by calcualtion. Delta can be used a dynamic pressure\
 BleedRatio = 0.0 #Ratio of turbine flow bleed\
 
-[Shaft]
+[Shaft]\
 Weight = 0.1 #kg\
 Inertia = 0.1 #kgm2\
 MechLoss = 0.05 #Mechanical Power Loss %\
 
-[Calculation]
+[Calculation]\
 Step = 100 #rpm resolution for calculation convergence[rpm]\
 PowRes = 3 #Target Power Resolution for calculation convergence[kW]\
 PRCRes = 0.01 #PRC Resolution for calculation convergence\
@@ -100,9 +100,9 @@ Output result for Bypass mode\
 "Turb Efficiency" = 0.713   #Turinbe stage adiabatic efficincy\
 "Total Flow[kg/s]" = 0.733  #Turbine stage total flow\
 "Turbine Flow[kg/s]" = 0.738  #Flow to turbine wheel
-"Bypass Ratio" = 0.008 \
+"Bypass Ratio" = 0.008\
 
-["Shaft&Combustor"]
+["Shaft&Combustor"]\
 "Fuel Flow [kg/s]" = 0.013   #Fuel flow after adjusted AFR\
 "Turbine Required Flow[kg/s]" = 0.727   #Required flow for turbine stage power\
 "Corrected Flow rate[kg/s]" = 0.344  #Corrected turbine flow rate\
