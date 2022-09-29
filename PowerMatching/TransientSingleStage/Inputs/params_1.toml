@@ -27,7 +27,7 @@ Inertia = 0.1 #kgm2
 MechLoss = 0.05 #Mechanical Power Loss %
 
 [Calculation]
-Step = 100 #rpm resolution for calculation convergence[rpm]
-PowRes = 3 #Target Power Resolution for calculation convergence[kW]
-PRCRes = 0.01 #PRC Resolution for calculation convergence
-WtRes = 0.1 #Wt* Resolution for calculation convergence
+Step = 10 #rpm resolution for calculation convergence[rpm]
+PowRes = 1 #Target Power Resolution for calculation convergence[kW]
+PRCRes = 0.0001 #PRC Resolution for calculation convergence
+WtRes = 0.01 #Wt* Resolution for calculation convergence

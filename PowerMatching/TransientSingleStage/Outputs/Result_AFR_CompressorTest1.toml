@@ -1,0 +1,32 @@
+[Compressor]
+"Power[kW]" = 194.973
+"Corrected Flow rate Wc*" = 0.824
+"Speed RPM" = 49807.592
+"Outlet Pres[kPaA]" = 500.01
+"Outlet Temp[degC]" = 271.402
+"Pres Ratio PRC" = 5.0
+"Comp Efficiency" = 0.698
+"Air Flow[kg/s]" = 0.8
+"Turbine Pressure Ratio P2c/P1t" = 1.111
+
+[Turbine]
+"Enthalpy[kW]" = 300.78
+"Turbine Power[kW]" = 205.234
+"Speed RPM" = 49807.592
+"Inlet Pres.[kPa]" = 450.009
+"Inlet Temp[C]" = 960.352
+"Outlet Pres[kPa]Tot" = 160.935
+"Outlet Temp[degC]" = 745.493
+"Pres Ratio PRT" = 2.796
+"Turb Efficiency" = 0.708
+"Total Flow[kg/s]" = 0.733
+"Turbine Flow[kg/s]" = 0.738
+"Bypass Ratio" = -0.002
+
+["Shaft&Combustor"]
+"Fuel Flow [kg/s]" = 0.013
+"Turbine Required Flow[kg/s]" = 0.734
+"Corrected Flow rate[kg/s]" = 0.344
+"Theoretical T1t[degC]" = 960.352
+"Mechanical Loss [kW]" = 10.262
+AFR = 54.798

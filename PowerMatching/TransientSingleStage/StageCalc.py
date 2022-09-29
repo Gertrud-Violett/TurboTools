@@ -4,6 +4,7 @@ Copyright (c) makkiblog.com
 MIT License 
 -*- SingleStage Power Matching Tool for Turbocompressor -*-
 stage calc subroutine
+v0.2 Improved convergence
 
 -*- SYNTAX USAGE -*-
 >python SingleStage_Matching.py
@@ -22,7 +23,8 @@ from scipy.interpolate import interp2d
 from scipy.interpolate import interp1d
 import toml
 import csv
-
+import warnings
+warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
     setting_file = './Inputs/setup.ini'
@@ -139,11 +141,11 @@ class Stage:
             return Enth,W_reqd,W_Tstar,PwAct,N_T,Poutact,Tout,PRT,BypassRatio,EtaT
 
     def PowBal(self,PRC,Nc,Nt,Step): #Compressor side power matching
-        if PRC > self.C_PRC:
-            Nc = Nc - Step
+        if PRC > self.C_PRC+self.S_PRCRes:
+            Nc =  Nc + Nc*1/2*((self.C_PRC/PRC)**(1/3) - 1) 
             return 1,Nc,Nt
         elif PRC < self.C_PRC-self.S_PRCRes:
-            Nc = Nc + Step
+            Nc = Nc + Nc*1/2*((self.C_PRC/PRC)**(1/3) - 1) 
             return 1,Nc,Nt
         else:
             Nt = Nc
@@ -151,21 +153,25 @@ class Stage:
 
     
     def PowBalRot(self,PRC,Nc,Nt,Step): #Option for unbalanced power and N rot turbine sliding mode
-        if PRC > self.C_PRC:
-            Nc = Nc - Step
+        if PRC > self.C_PRC+self.S_PRCRes:
+            Nc =  Nc + Nc*1/2*((self.C_PRC/PRC)**(1/3) - 1) 
             return 1,Nc,Nt
         elif PRC < self.C_PRC-self.S_PRCRes:
-            Nc = Nc + Step
+            Nc = Nc + Nc*1/2*((self.C_PRC/PRC)**(1/3) - 1) 
             return 1,Nc,Nt
         else:
+            Nt = Nc
+            return 0,Nc,Nt
+
+            """
             if np.abs(Nc - Nt) < Step:
                 return 0,Nc,Nt
-            if Nc > Nt:
-                Nt = Nt + Step
+            if Nc > Nt - Step:
+                Nt = Nt+1/2*(Nc-Nt)
                 return 1,Nc,Nt
-            elif Nt > Nc:
-                Nt = Nt - Step
+            elif Nt > Nc - Step:
+                Nt = Nt-1/2*(Nc-Nt)
                 return 1,Nc,Nt
             else:
                 print("Error:Power does not converge, change Step or PowRes")
-                
+               """ 
