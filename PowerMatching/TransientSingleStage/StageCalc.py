@@ -21,8 +21,9 @@ import importlib
 import pandas
 from scipy.interpolate import interp2d
 from scipy.interpolate import interp1d
-import toml
 import csv
+import itertools
+import tomli
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -33,50 +34,82 @@ if __name__ == '__main__':
     setting.read(setting_file, encoding='utf8')
     initrpm = setting.getfloat("Settings", "Initial rpm")
     humidity = setting.getfloat("Environment Variables", "humidity [0-1]") #not used yet
-    matchingmode = setting.get("Settings", "Matching Mode (Bypass or AFR)") # matching mode Bypass or AFR correction
+    #matchingmode = setting.get("Settings", "Matching Mode (Bypass or AFR)") # matching mode Bypass or AFR correction
     analysisname = setting.get("Settings", "Analysis Name")
     params_file = setting.get("Settings", "Input filename")
+    target_file = setting.get("Settings", "Target filename")
+    input_mode = setting.get("Settings", "Input mode (csv or toml)")
 
 #Class for each stage element calculation methods
 class Stage:
-    def __init__(self, stgno, params_file, reload = False):  
-        params_set = './Inputs/' + params_file + '_' + str(stgno) + '.toml'
-        with open(params_set) as inputf:
-            params = toml.load(inputf)
-        #Read Setting File (Each Stage Variables) toml file
-        self.P_Amb = params['Compressor']['AmbientPressure']
-        self.T_Amb = params['Compressor']['AmbientTemperature']
+    def __init__(self, stgno, params_file, target_file, input_mode,reload = False):
+        params_set = './Inputs/' + params_file + '.toml'
+        with open(params_set, 'rb') as paramobj:
+            params = tomli.load(paramobj)
+        print("Input Geometry:\n",params)
+
         self.C_Wt=params['Compressor']['Weight']
         self.C_I=params['Compressor']['Inertia']
-        self.C_Cp=(0.2208+51.48*10**-6*(self.T_Amb))*360/86
         self.C_gam=params['Compressor']['gamma']
-        self.C_flow=params['Compressor']['Flow']
-        self.C_PRC=params['Compressor']['PRC']
         self.C_BLDR=params['Compressor']['BleedRatio']
-
-        self.CB_t=params['Combustor']['CombustionTemp_T1t']
-        self.CB_dp=params['Combustor']['CombustordeltaP']
-        self.CB_AFR=params['Combustor']['AirFuelRatio']
+        self.T_BLDR=params['Turbine']['BleedRatio']
         self.CB_LHV=params['Combustor']['FuelLatentHeatLHV']
-        self.CB_Tempeff=params['Combustor']['TempEfficiency']
-
         self.T_Wt=params['Turbine']['Weight']
         self.T_I=params['Turbine']['Inertia']
-        self.T_Cp=(0.2208+51.48*10**-6*(self.CB_t+273.15))*360/86
-        self.T_gam=1.42-84.6*10**-6*(self.CB_t+273.15) 
-        self.T_Pout=params['Turbine']['BackPressure']
-        self.T_BLDR=params['Turbine']['BleedRatio']
-        
         self.S_Wt=params['Shaft']['Weight']
         self.S_I=params['Shaft']['Inertia']
         self.S_MechLoss=params['Shaft']['MechLoss']
-
-
         self.S_Step=params['Calculation']['Step']
         self.S_PowRes=params['Calculation']['PowRes']
         self.S_PRCRes=params['Calculation']['PRCRes']
         self.Wtres=params['Calculation']['WtRes']
-        self.T1tres=self.Wtres
+
+        if input_mode == 'toml':
+            target_set = './Inputs/' + target_file + '_' + str(stgno) + '.toml'
+            with open(target_set, 'rb') as targobj:
+                target = tomli.load(targobj)
+            print("Stage Target Parameters:\n",target)            
+        
+            #Read Setting File (Each Stage Variables) toml file
+            self.P_Amb = target['Compressor']['AmbientPressure']
+            self.T_Amb = target['Compressor']['AmbientTemperature']
+            self.C_Cp=(0.2208+51.48*10**-6*(self.T_Amb))*360/86
+            self.C_flow=target['Compressor']['Flow']
+            self.C_PRC=target['Compressor']['PRC']    
+
+            self.CB_t=target['Combustor']['CombustionTemp_T1t']
+            self.CB_dp=target['Combustor']['CombustordeltaP']
+            self.CB_AFR=target['Combustor']['AirFuelRatio']        
+            self.CB_Tempeff=target['Combustor']['TempEfficiency']
+            self.T_Pout=target['Turbine']['BackPressure']
+
+            self.T_Cp=(0.2208+51.48*10**-6*(self.CB_t+273.15))*360/86
+            self.T_gam=1.42-84.6*10**-6*(self.CB_t+273.15) 
+
+        elif input_mode == 'csv':
+            target_set = './Inputs/' + target_file + '.csv'  #Read all cases at once
+            with open(target_set, 'rb') as targobj:
+                df_target = pandas.read_csv(targobj, sep =",",  index_col=0)
+                index = str(stgno)
+            print("Stage Target Parameters:\n",df_target.loc[index,:])
+            self.P_Amb = float(df_target.loc[index,'Pc_in'])
+            self.T_Amb = float(df_target.loc[index,'Tc_in'])
+            self.C_Cp=(0.2208+51.48*10**-6*(self.T_Amb))*360/86
+            self.C_flow = float(df_target.loc[index,'Wc_in'])
+            self.C_PRC = float(df_target.loc[index,'PRC'])
+
+            self.CB_t = float(df_target.loc[index,'T1t_th'])
+            self.CB_dp = float(df_target.loc[index,'CB_dp'])
+            self.CB_AFR = float(df_target.loc[index,'AFR']  )      
+            self.CB_Tempeff = float(df_target.loc[index,'TempEff'])
+            self.T_Pout = float(df_target.loc[index,'Pt_out'])
+
+            self.T_Cp=(0.2208+51.48*10**-6*(self.CB_t+273.15))*360/86
+            self.T_gam=1.42-84.6*10**-6*(self.CB_t+273.15) 
+
+        else:
+            print('setup.ini ERROR: Input mode must be either csv or toml')
+            exit()
 
     #def showmap(self,stgno):
 
@@ -100,7 +133,8 @@ class Stage:
             Tadb = Tin*(PRC**((self.C_gam-1)/self.C_gam)-1) #deltaT
             Tout = Tadb/EtaC + Tin
             Power = self.C_Cp*Tadb/EtaC*W_C
-            print('COMPRESSOR','PwC[kW]:%.1f|' % Power,'NC[rpm]:%.0f|' % N_C,'NC*:%.0f|' % N_Cstar,'WC[kg/s]:%.2f|' % W_C,'WC*:%.2f|' % W_Cstar,'EtaC:%.3f|' % EtaC,'PRC:%.3f|' % PRC)
+            #CLI Output for Debug
+            #print('COMPRESSOR','PwC[kW]:%.1f|' % Power,'NC[rpm]:%.0f|' % N_C,'NC*:%.0f|' % N_Cstar,'WC[kg/s]:%.2f|' % W_C,'WC*:%.2f|' % W_Cstar,'EtaC:%.3f|' % EtaC,'PRC:%.3f|' % PRC)
             return Power,W_Cstar,N_C,Pout,Tout,PRC,EtaC
 
     def Combustor(self,W_C,Tin,Pin,AFR,C_BLDR,T_BLDR):
@@ -110,7 +144,8 @@ class Stage:
         deltaT = self.CB_LHV*10**6*W_F/(self.C_Cp*10**3*W_T)
         Tout = Tin + deltaT
         Pout = Pin*(1-self.CB_dp)
-        print('COMBUSTOR','P2c[kPa]:%.1f|'% Pin,'P1t[kPa]:%.1f|' % Pout)
+        #CLI Output for Debug
+        #print('COMBUSTOR','P2c[kPa]:%.1f|'% Pin,'P1t[kPa]:%.1f|' % Pout,'T1t[K]:%.1f|' % Tout)
         return W_F,W_T,Pout,Tout
 
     def TurbStage(self,stgno,EtaM,PwReq,Tin,Pin,N_T,W_T,Pout):
@@ -131,16 +166,18 @@ class Stage:
         W_reqdstar = W_reqd*(Tin/288.15)**0.5*101.325/Pin
         #W_Tinit = W_reqdstar
         BypassRatio = (W_T - W_reqd)/W_T
-        Poutact = Pin/PRT
+        Pini = Pout*PRT
+        
+        #CLI Output for Debug
+        #print('TURBINE','Tot. Enthal[kW]:%.1f|' % Enth,'PwT Reqd[kW]:%.1f|' % PwAct,'NT[rpm]:%.0f|' % N_T,'NT*:%.0f|' % N_Tstar,'W_Tot[kg/s]:%.2f|' % W_T,'W_Tot*:%.2f|' % W_Tstar,'W_Reqd Turb[kg/s]:%.2f|' % W_reqd,'W_Req Turb*:%.2f|' % W_reqdstar,'EtaT:%.3f|' % EtaT,'PRT:%.3f|' % PRT,'BPR:%.2f|' % BypassRatio,'P1t Actual[kPaA]:%.1f|' % Pini,'P2t Actual[kPaA]:%.1f|' % Pout)
         if BypassRatio < 0:
             print("ERROR: Bypass Ratio must be larger than 0. RESULTS WILL HAVE ERROR")
-            print('TURBINE','Tot. Enthal[kW]:%.1f|' % Enth,'PwT Reqd[kW]:%.1f|' % PwAct,'NT[rpm]:%.0f|' % N_T,'NT*:%.0f|' % N_Tstar,'W_Tot[kg/s]:%.2f|' % W_T,'W_Tot*:%.2f|' % W_Tstar,'W_Reqd Turb[kg/s]:%.2f|' % W_reqd,'W_Req Turb*:%.2f|' % W_reqdstar,'EtaT:%.3f|' % EtaT,'PRT:%.3f|' % PRT,'BPR:%.2f|' % BypassRatio,'P2t Actual[kPaA]:%.1f|' % Poutact)
-            return Enth,W_reqd,W_Tstar,PwAct,N_T,Poutact,Tout,PRT,BypassRatio,EtaT
+            return Enth,W_reqd,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT
         else:
-            print('TURBINE','Tot. Enthal[kW]:%.1f|' % Enth,'PwT Reqd[kW]:%.1f|' % PwAct,'NT[rpm]:%.0f|' % N_T,'NT*:%.0f|' % N_Tstar,'W_Tot[kg/s]:%.2f|' % W_T,'W_Tot*:%.2f|' % W_Tstar,'W_Reqd Turb[kg/s]:%.2f|' % W_reqd,'W_Req Turb*:%.2f|' % W_reqdstar,'EtaT:%.3f|' % EtaT,'PRT:%.3f|' % PRT,'BPR:%.2f|' % BypassRatio,'P2t Actual[kPaA]:%.1f|' % Poutact)
-            return Enth,W_reqd,W_Tstar,PwAct,N_T,Poutact,Tout,PRT,BypassRatio,EtaT
+            return Enth,W_reqd,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT
 
     def PowBal(self,PRC,Nc,Nt,Step): #Compressor side power matching
+        #Convergence by compressor scaling law
         if PRC > self.C_PRC+self.S_PRCRes:
             Nc =  Nc + Nc*1/2*((self.C_PRC/PRC)**(1/3) - 1) 
             return 1,Nc,Nt
@@ -150,7 +187,6 @@ class Stage:
         else:
             Nt = Nc
             return 0,Nc,Nt
-
     
     def PowBalRot(self,PRC,Nc,Nt,Step): #Option for unbalanced power and N rot turbine sliding mode
         if PRC > self.C_PRC+self.S_PRCRes:
@@ -163,6 +199,7 @@ class Stage:
             Nt = Nc
             return 0,Nc,Nt
 
+            #Optional Nt convergence for slip coupling
             """
             if np.abs(Nc - Nt) < Step:
                 return 0,Nc,Nt

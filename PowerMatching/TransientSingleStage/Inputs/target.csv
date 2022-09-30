@@ -1,0 +1,4 @@
+Stage,Pc_in,Tc_in,Wc_in,PRC,T1t_th,CB_dp,AFR,TempEff,Pt_out
+Param,Inlet Pressure (Static),Inlet Temp,Inlet Flow Rate,Compressor Pressure Ratio,Turbine Inlet Temp,Combustor initial DeltaP,Air Fuel Ratio,Temperature Efficiency,Turbine Outlet Pressure
+Unit,kPaA,kPaA,kg/s,Ratio,Kelvin,Ratio,Ratio,Ratio,kPaA
+1,100,298,0.8,5,1473,0.15,40,1,140
