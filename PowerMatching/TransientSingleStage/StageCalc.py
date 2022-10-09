@@ -5,9 +5,9 @@ MIT License
 -*- SingleStage Power Matching Tool for Turbocompressor -*-
 stage calc subroutine
 v0.2 Improved convergence
+v1.0 Initial Release Working version
+v1.1 Updated convergence parameter
 
--*- SYNTAX USAGE -*-
->python SingleStage_Matching.py
 vvvCODEvvv
 """
 
@@ -27,22 +27,24 @@ import tomli
 import warnings
 warnings.filterwarnings("ignore")
 
-if __name__ == '__main__':
-    setting_file = './Inputs/setup.ini'
-    setting = configparser.ConfigParser()
-    setting.optionxform = str  #Case sensitve option
-    setting.read(setting_file, encoding='utf8')
-    initrpm = setting.getfloat("Settings", "Initial rpm")
-    humidity = setting.getfloat("Environment Variables", "humidity [0-1]") #not used yet
-    #matchingmode = setting.get("Settings", "Matching Mode (Bypass or AFR)") # matching mode Bypass or AFR correction
-    analysisname = setting.get("Settings", "Analysis Name")
-    params_file = setting.get("Settings", "Input filename")
-    target_file = setting.get("Settings", "Target filename")
-    input_mode = setting.get("Settings", "Input mode (csv or toml)")
+#if __name__ == '__main__':
 
 #Class for each stage element calculation methods
 class Stage:
-    def __init__(self, stgno, params_file, target_file, input_mode,reload = False):
+    def __init__(self, stgno, settingfilename,params_file, target_file, input_mode,reload = False):
+        setting_file = './Inputs/'+settingfilename+'.ini'
+        setting = configparser.ConfigParser()
+        setting.optionxform = str  #Case sensitve option
+        setting.read(setting_file, encoding='utf8')
+        initrpm = setting.getfloat("Settings", "Initial rpm")
+        humidity = setting.getfloat("Environment Variables", "humidity [0-1]") #not used yet
+        #matchingmode = setting.get("Settings", "Matching Mode (Bypass or AFR)") # matching mode Bypass or AFR correction
+        analysisname = setting.get("Settings", "Analysis Name")
+        params_file = setting.get("Settings", "Input filename")
+        target_file = setting.get("Settings", "Target filename")
+        input_mode = setting.get("Settings", "Input mode (csv or toml)")
+
+
         params_set = './Inputs/' + params_file + '.toml'
         with open(params_set, 'rb') as paramobj:
             params = tomli.load(paramobj)
@@ -51,8 +53,6 @@ class Stage:
         self.C_Wt=params['Compressor']['Weight']
         self.C_I=params['Compressor']['Inertia']
         self.C_gam=params['Compressor']['gamma']
-        self.C_BLDR=params['Compressor']['BleedRatio']
-        self.T_BLDR=params['Turbine']['BleedRatio']
         self.CB_LHV=params['Combustor']['FuelLatentHeatLHV']
         self.T_Wt=params['Turbine']['Weight']
         self.T_I=params['Turbine']['Inertia']
@@ -75,7 +75,9 @@ class Stage:
             self.T_Amb = target['Compressor']['AmbientTemperature']
             self.C_Cp=(0.2208+51.48*10**-6*(self.T_Amb))*360/86
             self.C_flow=target['Compressor']['Flow']
-            self.C_PRC=target['Compressor']['PRC']    
+            self.C_PRC=target['Compressor']['PRC']
+            self.C_BLDR=target['Compressor']['BleedRatio']
+            self.T_BLDR=target['Turbine']['BleedRatio']    
 
             self.CB_t=target['Combustor']['CombustionTemp_T1t']
             self.CB_dp=target['Combustor']['CombustordeltaP']
@@ -97,6 +99,8 @@ class Stage:
             self.C_Cp=(0.2208+51.48*10**-6*(self.T_Amb))*360/86
             self.C_flow = float(df_target.loc[index,'Wc_in'])
             self.C_PRC = float(df_target.loc[index,'PRC'])
+            self.C_BLDR=float(df_target.loc[index,'Bleed_C'])
+            self.T_BLDR=float(df_target.loc[index,'Bleed_T'])
 
             self.CB_t = float(df_target.loc[index,'T1t_th'])
             self.CB_dp = float(df_target.loc[index,'CB_dp'])
@@ -113,9 +117,10 @@ class Stage:
 
     #def showmap(self,stgno):
 
-    def CompStage(self,stgno,Tin,Pin,N_C,W_C,PRC_Target):
+    def CompStage(self,stgno,cmap,Tin,Pin,N_C,W_C,PRC_Target):
         #Read Compressor Map
-        df = pandas.read_csv("./Inputs/cmap_%s.csv" % (stgno), sep =",")
+        df = pandas.read_csv("./Inputs/%s_%s.csv" % (cmap,1), sep =",")  #for single -stage
+        #df = pandas.read_csv("./Inputs/%s_%s.csv" % (cmap,stgno), sep =",") #for multi-stage maps
         W_Cstar = W_C*(Tin/288.15)**0.5*101.325/Pin  #Corrected flow rate
         N_Cstar = N_C/(Tin/288.15)**0.5 #Corrected Speed
         if N_Cstar > max(df['NC*']):
@@ -148,11 +153,12 @@ class Stage:
         #print('COMBUSTOR','P2c[kPa]:%.1f|'% Pin,'P1t[kPa]:%.1f|' % Pout,'T1t[K]:%.1f|' % Tout)
         return W_F,W_T,Pout,Tout
 
-    def TurbStage(self,stgno,EtaM,PwReq,Tin,Pin,N_T,W_T,Pout):
+    def TurbStage(self,stgno,tmap,EtaM,PwReq,Tin,Pin,N_T,W_T,Pout):
         #Read Turbine Map
         W_Tstar = W_T*(Tin/288.15)**0.5*101.325/Pin #Corrected flow rate
         N_Tstar = N_T/(Tin/288.15)**0.5 #Corrected Speed
-        df = pandas.read_csv("./Inputs/tmap_%s.csv" % (stgno), sep =",")
+        df = pandas.read_csv("./Inputs/%s_%s.csv" % (tmap,1), sep =",") #for single-stage
+        #df = pandas.read_csv("./Inputs/%s_%s.csv" % (tmap,stgno), sep =",") #for multi-stage maps
         f_PRT = interp2d(x = df['NT*'], y = df['WT*'], z = df['PRT'])
         f_EtaT = interp2d(x = df['NT*'], y = df['WT*'], z = df['EtaT'])
                         
@@ -171,7 +177,7 @@ class Stage:
         #CLI Output for Debug
         #print('TURBINE','Tot. Enthal[kW]:%.1f|' % Enth,'PwT Reqd[kW]:%.1f|' % PwAct,'NT[rpm]:%.0f|' % N_T,'NT*:%.0f|' % N_Tstar,'W_Tot[kg/s]:%.2f|' % W_T,'W_Tot*:%.2f|' % W_Tstar,'W_Reqd Turb[kg/s]:%.2f|' % W_reqd,'W_Req Turb*:%.2f|' % W_reqdstar,'EtaT:%.3f|' % EtaT,'PRT:%.3f|' % PRT,'BPR:%.2f|' % BypassRatio,'P1t Actual[kPaA]:%.1f|' % Pini,'P2t Actual[kPaA]:%.1f|' % Pout)
         if BypassRatio < 0:
-            print("ERROR: Bypass Ratio must be larger than 0. RESULTS WILL HAVE ERROR")
+            print("ERROR: Bypass Ratio must be larger than 0. RESULTS WILL HAVE ERROR, BPR:",BypassRatio)
             return Enth,W_reqd,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT
         else:
             return Enth,W_reqd,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT

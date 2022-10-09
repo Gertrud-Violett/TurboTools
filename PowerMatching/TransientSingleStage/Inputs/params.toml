@@ -2,7 +2,6 @@
 Weight = 0.1 #kg
 Inertia = 0.1 #kgm2
 gamma = 1.395
-BleedRatio = 0.11 #Ratio of compressor flow bleed
 
 [Combustor]
 FuelLatentHeatLHV = 38 #MJ/kg
@@ -10,7 +9,6 @@ FuelLatentHeatLHV = 38 #MJ/kg
 [Turbine]
 Weight = 0.1 #kg
 Inertia = 0.1 #kgm2
-BleedRatio = 0.0 #Ratio of turbine flow bleed
 
 [Shaft]
 Weight = 0.1 #kg
@@ -19,6 +17,6 @@ MechLoss = 0.05 #Mechanical Power Loss %
 
 [Calculation]
 Step = 10 #rpm resolution for calculation convergence[rpm]
-PowRes = 1 #Target Power Resolution for calculation convergence[kW]
+PowRes = 0.2 #Target Power Resolution for calculation convergence[kW]
 PRCRes = 0.001 #PRC Resolution for calculation convergence
-WtRes = 0.01 #Wt* Resolution for calculation convergence
+WtRes = 0.2 #Wt* Resolution for calculation convergence

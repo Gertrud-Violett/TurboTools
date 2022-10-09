@@ -1,0 +1,29 @@
+,,Stage:1
+Compressor,Power[kW],101.801
+Compressor,Corrected Flow rate Wc*,0.618
+Compressor,Speed RPM,43873.882
+Compressor,Outlet Pres[kPaA],450.095
+Compressor,Outlet Temp[degC],196.493
+Compressor,Pres Ratio PRC,4.501
+Compressor,Comp Efficiency,0.922
+Compressor,Air Flow[kg/s],0.6
+Compressor,Turbine Pressure Ratio P2c/P1t,1.306
+Turbine,Total Enthalpy[kW],175.276
+Turbine,Turbine Enthalpy[kW],176.816
+Turbine,Turbine Power[kW],107.159
+Turbine,Speed RPM,43873.882
+Turbine,Inlet Pres.[kPa],344.586
+Turbine,Inlet Temp[C],804.713
+Turbine,Outlet Pres[kPa]Tot,140.0
+Turbine,Outlet Temp[degC],650.469
+Turbine,Pres Ratio PRT,2.461
+Turbine,Turb Efficiency,0.639
+Turbine,Total Flow[kg/s],0.549
+Turbine,Turbine Flow[kg/s],0.553
+Turbine,Bypass Ratio[BPR],-0.009
+Shaft,Fuel Flow [kg/s],0.009
+Shaft,Turbine Required Flow[kg/s],0.552
+Shaft,Turbine Corrected Flow rate[kg/s],0.315
+Shaft,Theoretical T1t[degC],804.713
+Shaft,Mechanical Loss [kW],5.358
+Shaft,AFR,62.204
