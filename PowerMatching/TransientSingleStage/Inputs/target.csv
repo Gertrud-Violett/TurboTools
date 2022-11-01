@@ -1,5 +1,5 @@
 Stage,Pc_in,Tc_in,Wc_in,PRC,Bleed_C,Bleed_T,T1t_th,CB_dp,AFR,TempEff,Pt_out
 Param,Inlet Pressure (Static),Inlet Temp,Inlet Flow Rate,Compressor Pressure Ratio,Compressor Bleed Ratio,Turbine Bleed Ratio,Turbine Inlet Temp,Combustor initial DeltaP,Air Fuel Ratio,Temperature Efficiency,Turbine Outlet Pressure
-Unit,kPaA,kPaA,kg/s,Ratio,-,-,Kelvin,Ratio,Ratio,Ratio,kPaA
-1,100,298,0.6,4.5,0.1,0,1273,0,40,1,140
-2,100,298,0.8,5.8,0.1,0,1300,0.05,40,1,160
+Unit,kPaA,K,kg/s,Ratio,-,-,Kelvin,Ratio,Ratio,Ratio,kPaA
+1,100,298,0.6,4.5,0.1,0,1273,0,40,0.9046,140
+2,100,298,0.8,5.8,0.1,0,1300,0.05,40,0.8902,160

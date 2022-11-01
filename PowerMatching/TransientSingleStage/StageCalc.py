@@ -1,28 +1,27 @@
 """
--*- coding: utf-8 -*-
+===-*- TurboCompressor Matching Tool -*-===
+StageCalc Module
+
+=====-*- General -*-=====
 Copyright (c) makkiblog.com
 MIT License 
--*- SingleStage Power Matching Tool for Turbocompressor -*-
-stage calc subroutine
+coding: utf-8
+
+===-*- VERSION -*-===
+v0.1 Initial version
 v0.2 Improved convergence
 v1.0 Initial Release Working version
 v1.1 Updated convergence parameter
+v1.2 Fixed T2t error and updated turbine convergence
 
 vvvCODEvvv
 """
 
-import sys
-import os
-import math
 import configparser
 import numpy as np
-import matplotlib.pyplot as plt
-import importlib
 import pandas
 from scipy.interpolate import interp2d
 from scipy.interpolate import interp1d
-import csv
-import itertools
 import tomli
 import warnings
 warnings.filterwarnings("ignore")
@@ -153,34 +152,54 @@ class Stage:
         #print('COMBUSTOR','P2c[kPa]:%.1f|'% Pin,'P1t[kPa]:%.1f|' % Pout,'T1t[K]:%.1f|' % Tout)
         return W_F,W_T,Pout,Tout
 
-    def TurbStage(self,stgno,tmap,EtaM,PwReq,Tin,Pin,N_T,W_T,Pout):
+    def TurbStage(self,stgno,tmap,EtaM,PwReq,Tin,Pininit,N_T,W_T,Pout):
         #Read Turbine Map
-        W_Tstar = W_T*(Tin/288.15)**0.5*101.325/Pin #Corrected flow rate
+        W_Tstarinit = W_T*(Tin/288.15)**0.5*101.325/Pininit #Corrected flow rate
         N_Tstar = N_T/(Tin/288.15)**0.5 #Corrected Speed
         df = pandas.read_csv("./Inputs/%s_%s.csv" % (tmap,1), sep =",") #for single-stage
         #df = pandas.read_csv("./Inputs/%s_%s.csv" % (tmap,stgno), sep =",") #for multi-stage maps
-        f_PRT = interp2d(x = df['NT*'], y = df['WT*'], z = df['PRT'])
-        f_EtaT = interp2d(x = df['NT*'], y = df['WT*'], z = df['EtaT'])
-                        
-        PRT = f_PRT(N_Tstar,W_Tstar)
-        EtaT = f_EtaT(N_Tstar,W_Tstar)
+                
+        f_EtaT = interp2d(x = df['NT*'], y = df['PRT'], z = df['EtaT'])
+        f_WT = interp2d(x = df['NT*'], y = df['PRT'], z = df['WT*'])
+        #PRT = f_PRT(N_Tstar,W_Tstar)
+        PRT = Pininit/Pout
+        W_Tstar = f_WT(N_Tstar,PRT)
+        EtaT = max(f_EtaT(N_Tstar,PRT),min(df['EtaT']))  #Avoid Extrapolation and divergence
+
+        deltaW = W_Tstarinit - W_Tstar
+        while abs(deltaW) > self.Wtres*min(df['WT*']):  #find WT* from PRT due to sensitivity issue
+            PRT += deltaW/W_Tstar*self.Wtres
+            Pin = PRT*Pout
+            W_Tstar = f_WT(N_Tstar,PRT)
+            EtaT = max(f_EtaT(N_Tstar,PRT),min(df['EtaT'])) #Avoid Extrapolation and divergence
+            deltaW = W_Tstarinit - W_Tstar
+            if PRT > max(df['PRT']): #Avoid Extrapolation and divergence
+                PRT = max(df['PRT'])
+                print('WARNING PRT Exceed limits, Max. PRT Used:',PRT)
+                W_Tstar = max(df['WT*'])
+                EtaT = min(df['EtaT'])
+                break
+            #print('deltaW Map:',deltaW,'deltaPRT:',deltaW/min(df['WT*']),'PRT:',PRT,'W_Tstar:',W_Tstar)
+        Pin = PRT*Pout
+        W_Tcalc = W_Tstar/((Tin/288.15)**0.5*101.325/Pin)
         Tadb = Tin*(1-PRT**((self.T_gam-1)/self.T_gam))  #deltaT
-        Tout = Tadb*EtaT + Tin
-        Enth = -self.T_Cp*Tadb*EtaT*W_T
+        Tout = Tadb + Tin
+        Enth = -self.T_Cp*Tadb*EtaT*W_Tcalc
         PwAct = PwReq/EtaM
         W_reqd = -PwAct/(self.T_Cp*Tadb*EtaT)
         W_reqdstar = W_reqd*(Tin/288.15)**0.5*101.325/Pin
-        #W_Tinit = W_reqdstar
-        BypassRatio = (W_T - W_reqd)/W_T
+        BypassRatio = (W_Tcalc - W_reqd)/W_Tcalc
         Pini = Pout*PRT
+        
+        #print('W_Tcalc',W_Tcalc,'W_reqd',W_reqd,'BPR',BypassRatio,'PwAct',PwAct,'Enth',Enth,'EtaT',EtaT,'Tadb',Tadb)
         
         #CLI Output for Debug
         #print('TURBINE','Tot. Enthal[kW]:%.1f|' % Enth,'PwT Reqd[kW]:%.1f|' % PwAct,'NT[rpm]:%.0f|' % N_T,'NT*:%.0f|' % N_Tstar,'W_Tot[kg/s]:%.2f|' % W_T,'W_Tot*:%.2f|' % W_Tstar,'W_Reqd Turb[kg/s]:%.2f|' % W_reqd,'W_Req Turb*:%.2f|' % W_reqdstar,'EtaT:%.3f|' % EtaT,'PRT:%.3f|' % PRT,'BPR:%.2f|' % BypassRatio,'P1t Actual[kPaA]:%.1f|' % Pini,'P2t Actual[kPaA]:%.1f|' % Pout)
         if BypassRatio < 0:
-            print("ERROR: Bypass Ratio must be larger than 0. RESULTS WILL HAVE ERROR, BPR:",BypassRatio)
-            return Enth,W_reqd,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT
+            #print("ERROR: Bypass Ratio must be larger than 0.  BPR:",BypassRatio)
+            return Enth,W_reqd,W_Tcalc,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT
         else:
-            return Enth,W_reqd,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT
+            return Enth,W_reqd,W_Tcalc,W_Tstar,PwAct,N_T,Pout,Pini,Tout,PRT,BypassRatio,EtaT
 
     def PowBal(self,PRC,Nc,Nt,Step): #Compressor side power matching
         #Convergence by compressor scaling law
@@ -205,7 +224,7 @@ class Stage:
             Nt = Nc
             return 0,Nc,Nt
 
-            #Optional Nt convergence for slip coupling
+            #Optional Nt convergence mode for slip coupling
             """
             if np.abs(Nc - Nt) < Step:
                 return 0,Nc,Nt
