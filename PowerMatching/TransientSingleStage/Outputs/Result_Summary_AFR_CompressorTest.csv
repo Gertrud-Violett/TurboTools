@@ -1,31 +1,31 @@
 ,,Stage:1,Stage:2
-Compressor,Power[kW],101.801,177.7511
+Compressor,Power[kW],110.1088,174.752
 Compressor,Corrected Flow rate Wc*,0.6183,0.8243
-Compressor,Speed RPM,43873.8815,54891.5192
-Compressor,Outlet Pres[kPaA],450.0945,580.0827
-Compressor,Outlet Temp[degC],196.4927,249.6243
+Compressor,Speed RPM,43574.8422,54781.971
+Compressor,Outlet Pres[kPaA],450.0936,580.0787
+Compressor,Outlet Temp[degC],210.5002,245.8318
 Compressor,Pres Ratio PRC,4.5009,5.8008
-Compressor,Comp Efficiency,0.922,0.8552
+Compressor,Comp Efficiency,0.8524,0.8699
 Compressor,Air Flow[kg/s],0.6,0.8
-Compressor,Turbine Pressure Ratio P2c/P1t,1.2034,1.1344
-Turbine,Total Enthalpy[kW],159.4387,278.6323
-Turbine,Turbine Enthalpy[kW],160.5105,280.0376
-Turbine,Turbine Power[kW],107.159,187.1064
-Turbine,Speed RPM,43873.8815,54891.5192
-Turbine,Inlet Pres.[kPa],374.0292,511.3748
-Turbine,Inlet Temp[C],771.7861,858.4972
+Compressor,Turbine Pressure Ratio P2c/P1t,1.2674,1.128
+Turbine,Total Enthalpy[kW],173.0125,273.7694
+Turbine,Turbine Enthalpy[kW],173.5781,275.3355
+Turbine,Turbine Power[kW],115.904,183.9494
+Turbine,Speed RPM,43574.8422,54781.971
+Turbine,Inlet Pres.[kPa],355.1333,514.2402
+Turbine,Inlet Temp[C],901.6184,832.517
 Turbine,Outlet Pres[kPa]Tot,140.0,160.0
-Turbine,Outlet Temp[degC],514.0788,523.8748
-Turbine,Pres Ratio PRT,2.6716,3.1961
+Turbine,Outlet Temp[degC],628.8232,503.7911
+Turbine,Pres Ratio PRT,2.5367,3.214
 Turbine,Turb Efficiency,0.704,0.704
-Turbine,Total Flow[kg/s],0.5498,0.7343
+Turbine,Total Flow[kg/s],0.5517,0.7338
 Turbine,Turbine Flow[kg/s],0.5535,0.738
-Turbine,Bypass Ratio[BPR],-0.0067,-0.005
-Shaft,Fuel Flow [kg/s],0.0098,0.0143
-Shaft,Turbine Required Flow[kg/s],0.4697,0.6287
-Shaft,Turbine Corrected Flow rate[kg/s],0.2427,0.2471
-Shaft,Theoretical T1t[degC],881.9861,998.0781
-Shaft,Mechanical Loss [kW],5.3579,9.3553
-Shaft,AFR,55.0796,50.3621
-Shaft,dP_comb[kPa],76.0653,68.7078
-Shaft,Temp Efficiency,1.102,1.0226
+Turbine,Bypass Ratio[BPR],-0.0033,-0.0057
+Shaft,Fuel Flow [kg/s],0.0117,0.0138
+Shaft,Turbine Required Flow[kg/s],0.4799,0.6292
+Shaft,Turbine Corrected Flow rate[kg/s],0.2769,0.2431
+Shaft,Theoretical T1t[degC],1025.5106,968.8934
+Shaft,Mechanical Loss [kW],5.7952,9.1975
+Shaft,AFR,46.1677,52.1659
+Shaft,dP_comb[kPa],94.9604,65.8384
+Shaft,Temp Efficiency,0.9802,1.0467

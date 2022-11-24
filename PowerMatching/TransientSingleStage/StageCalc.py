@@ -123,10 +123,10 @@ class Stage:
         W_Cstar = W_C*(Tin/288.15)**0.5*101.325/Pin  #Corrected flow rate
         N_Cstar = N_C/(Tin/288.15)**0.5 #Corrected Speed
         if N_Cstar > max(df['NC*']):
-            print ("ERROR:Initial rpm too large")
+            print ("ERROR:Initial rpm too large", N_Cstar)
             exit()
         elif N_Cstar < min(df['NC*']):
-            print ("ERROR:Initial rpm too small")
+            print ("ERROR:Initial rpm too small", N_Cstar)
             exit()
         else:
             f_PRC = interp2d(x = df['NC*'], y = df['WC*'], z = df['PRC'])

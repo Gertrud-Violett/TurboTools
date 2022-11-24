@@ -1,30 +1,30 @@
 ,,Stage:1,Stage:2
-Compressor,Power[kW],101.801,177.7511
+Compressor,Power[kW],110.1088,174.752
 Compressor,Corrected Flow rate Wc*,0.6183,0.8243
-Compressor,Speed RPM,43873.8815,54891.5192
-Compressor,Outlet Pres[kPaA],450.0945,580.0827
-Compressor,Outlet Temp[degC],196.4927,249.6243
+Compressor,Speed RPM,43574.8422,54781.971
+Compressor,Outlet Pres[kPaA],450.0936,580.0787
+Compressor,Outlet Temp[degC],210.5002,245.8318
 Compressor,Pres Ratio PRC,4.5009,5.8008
-Compressor,Comp Efficiency,0.922,0.8552
+Compressor,Comp Efficiency,0.8524,0.8699
 Compressor,Air Flow[kg/s],0.6,0.8
-Compressor,CombustorPressure Ratio P2c/P1t,1.3014,1.2413
-Turbine,Total Enthalpy[kW],220.0042,379.4725
-Turbine,Turbine Enthalpy[kW],159.1449,278.9223
-Turbine,Turbine Power[kW],107.159,187.1064
-Turbine,Speed RPM,43873.8815,54891.5192
-Turbine,Inlet Pres.[kPa],345.8474,467.2999
+Compressor,CombustorPressure Ratio P2c/P1t,1.2962,1.2456
+Turbine,Total Enthalpy[kW],220.6559,377.6655
+Turbine,Turbine Enthalpy[kW],171.3815,274.4985
+Turbine,Turbine Power[kW],115.904,183.9494
+Turbine,Speed RPM,43574.8422,54781.971
+Turbine,Inlet Pres.[kPa],347.2507,465.7082
 Turbine,Inlet Temp[C],999.85,1026.85
 Turbine,Outlet Pres[kPa]Tot,140.0,160.0
-Turbine,Outlet Temp[degC],713.5397,675.9559
-Turbine,Pres Ratio PRT,2.4703,2.9206
+Turbine,Outlet Temp[degC],712.1226,677.2113
+Turbine,Pres Ratio PRT,2.4804,2.9107
 Turbine,Turb Efficiency,0.704,0.704
 Turbine,Total Flow[kg/s],0.5535,0.738
-Turbine,Turbine Flow[kg/s],0.4004,0.5424
-Turbine,Bypass Ratio[BPR],0.2766,0.265
+Turbine,Turbine Flow[kg/s],0.4299,0.5364
+Turbine,Bypass Ratio[BPR],0.2233,0.2732
 Shaft,Fuel Flow [kg/s],0.0135,0.018
-Shaft,Turbine Required Flow[kg/s],0.4228,0.5996
-Shaft,Turbine Corrected Flow rate[kg/s],0.2586,0.2753
-Shaft,Theoretical T1t[degC],1134.107,1187.2386
-Shaft,Mechanical Loss [kW],5.3579,9.3553
+Shaft,Turbine Required Flow[kg/s],0.455,0.5916
+Shaft,Turbine Corrected Flow rate[kg/s],0.276,0.2728
+Shaft,Theoretical T1t[degC],1148.1145,1183.4461
+Shaft,Mechanical Loss [kW],5.7952,9.1975
 Shaft,AFR,40.0,40.0
-Shaft,Temp Efficiency,0.9046,0.8902
+Shaft,Temp Efficiency,0.8957,0.8925

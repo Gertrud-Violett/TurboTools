@@ -35,7 +35,8 @@ from StageCalc import Stage
 
 #init parser
 parser=argparse.ArgumentParser()
-parser.add_argument('matching mode', help='Enter setup filename and matching mode (Bypass or AFR)')
+parser.add_argument('matching mode', nargs='*', default=[2],help='Enter setup filename and matching mode (Bypass or AFR)')
+args=parser.parse_args()
 
 #import setting file
 if __name__ == '__main__':
@@ -241,6 +242,23 @@ while i < data_no + 1:
     i+=1
 print(res_matrix)
 res_matrix.to_csv('./Outputs/Result_Summary_'+matchingmode+'_'+analysisname+'.csv')
+resplt = res_matrix.transpose()
+print('=======RESULT MATRIX========')
+print(resplt)
+print('============================')
+
+#===========PLOT RESULTS================
+fig = plt.figure(figsize=(16,16))
+
+ax1 = fig.add_subplot(1,1,1)
+ax1.set_title("Flow-Bypass Ratio")
+ax1.set_xlabel("Turbine Total Flow [kg/s]")
+ax1.set_ylabel("Bypass Ratio")
+ax1.plot(resplt['Turbine']['Total Flow[kg/s]'],resplt['Turbine']['Bypass Ratio[BPR]'])
+plt.tight_layout()
+plt.savefig("./Outputs/MatchingResult" + analysisname + "_.png", dpi=300)
+plt.show()
+
 
 
 
