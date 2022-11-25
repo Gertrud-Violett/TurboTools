@@ -7,6 +7,7 @@ coding: utf-8
 
 ===-*- VERSION -*-===
 v3.0 Initial Release with Interpolation
+v3.1 Option for multi data lugline plots
 vvvCODEvvv
 """
 
@@ -48,6 +49,57 @@ plt.rcParams["figure.figsize"] = (25,20)
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.grid'] = False
 
+#============DEFINE CURVEFIT Method===================
+#====================NOT USED=========================
+#Reference: https://rikei-fufu.com/2020/07/05/post-3270-fitting/
+
+def fitfunc(X,C0,D2,D1,E2,E1): # 2D Gaussian
+    y, bet = X #NC, WC, PRC
+    z = C0+D2*y**2+D1*y+E2*bet**2+E1*bet
+    return z
+    
+def fitting_curve(in_df):
+    #x_obs = in_df['NC']
+    y_obs = in_df['WC']
+    bet_obs = in_df['PRC']
+    z_obs = in_df['ETAC']
+ 
+    #main calc
+    popt, pcov = curve_fit(fitfunc, (y_obs, bet_obs), z_obs) 
+    perr = np.sqrt(np.diag(pcov)) 
+ 
+    #Chi2 contingency
+    o = z_obs
+    e = fitfunc((y_obs, bet_obs), popt[0], popt[1], popt[2], popt[3], popt[4]) 
+    chi2 = stats.chisquare(o, f_exp = e, ddof=4) #ChiSq. Calc: Output: [chi**2, p value]
+ 
+    #R2 calc
+    residuals =  o - e 
+    rss = np.sum(residuals**2)      #: residual sum of squares = rss
+    tss = np.sum((o-np.mean(o))**2) #: total sum of squares = tss
+    r_squared = 1 - (rss / tss)     #R^2
+    statistics_numbers = {  "X-squared": format(chi2[0], '.3f'),
+                            "p-value": format(chi2[1], '.5f'),
+                            "R^2": format(r_squared, '.4f')}
+
+    #Print results
+    print("==========Fit Result============")
+    print("T1t = C0 + [Dn*WC^n] + [En*PRC^n]")
+    print("Constants:",popt)
+    print('Error:',perr)   
+    print("X-squared, p-value, R^2:", statistics_numbers)
+    print("=============EOF=============") 
+    return popt,perr,statistics_numbers
+
+
+def EtaC_fit(WC,PRC,Cs,Error):
+    EtaC = Cs[0]+Cs[1]*WC**2+Cs[2]*WC+Cs[3]*PRC**2+Cs[4]*PRC
+    ERRmax = 0
+    #ERRmax = np.sqrt(Error[0]**2+Error[1]**2*NC**2+Error[2]**2*NC+Error[3]**2*WC**2+Error[4]**2*WC+Error[5]**2*PRC**2+Error[6]**2*PRC)
+    return EtaC,ERRmax
+
+
+
 #===========Read Datas================
 #csv data for test result
 def csv_df(data):
@@ -63,6 +115,9 @@ def map_array(cmap):
 
 def map_csv(cmap):
     return pd.read_csv('./Data/' + cmap  +'.csv', skiprows=1, names=["NC","WC","PRC","ETAC"])
+
+
+
 
  #========1D Interpolation method==========
 def EtaC_Interpolate(df,pitch):
@@ -152,13 +207,14 @@ def EtaC_Interpolate(df,pitch):
     toc2 = time.perf_counter()
     return(res_arr,n,toc1,toc2)
     
+
 #============================OPTION 1 =========================================
 #=================Plotting with curve fit method===============================
 #==============================================================================
 
 tic = time.perf_counter()
 
-def Interpolate_plot(df,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax,elevation,azimuth,pitch):
+def Interpolate_plot(df,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azimuth,pitch):
     df['spdline']=df.groupby('NC').ngroup()
     rpmgrp=df.groupby('spdline')
     nmax=rpmgrp.ngroups
@@ -177,13 +233,8 @@ def Interpolate_plot(df,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     cvfgrp=result_interp.groupby('spdline')
 
     #Plot Settings============================
-    datax1=data1['WC']
-    datay1=data1['PRC']
-    datax2=data2['WC']
-    datay2=data2['PRC']
-
     plt.figure(0)
-    plt.title("Compressor Map_"  + cmapname + '_' + name1 + '_' + name2)
+    plt.title("Compressor Map_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('PRC [-]')
     plt.axis ([0,xlim,ylmin,ylmax])
@@ -191,7 +242,7 @@ def Interpolate_plot(df,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     plt.yticks(np.arange(ylmin, ylmax, (ylmax-ylmin)/20))
     
     plt.figure(1)
-    plt.title("Flow-EtaC_"  + cmapname + '_' + name1 + '_' + name2)
+    plt.title("Flow-EtaC_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('EtaC [-]')
     plt.axis ([0,xlim,etamin,etamax])
@@ -252,23 +303,28 @@ def Interpolate_plot(df,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     #Surge line and choke line
     plt.figure(0)
     plt.plot(surgelinex, surgeliney,"midnightblue", label = 'GS Surgeline', linewidth=4)
-    plt.plot(chokelinex, chokeliney,"midnightblue", label = 'GS Chokeline', linewidth=4)   
-    #plot datas
-    plt.plot(datax1, datay1,color1, label = name1, linewidth=1)
-    plt.plot(datax2, datay2,color2, label = name2, linewidth=1)
-    plt.legend()
-    plt.savefig('./Data/FIT_CMaP' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.plot(chokelinex, chokeliney,"midnightblue", label = 'GS Chokeline', linewidth=4)
     
+    #plot datas
+    k=0
+    for datas in data:
+        dat = csv_df(data[k])
+        col = color[k]
+        plt.plot(dat['WC'], dat['PRC'],color[k], label = name[k], linewidth=2)
+        k+=1    
+    plt.legend()
+    plt.savefig('./Data/FIT_CMaP' + cmapname + '_' + name[0] + '.png', dpi=300)
+
     plt.figure(1)
     plt.legend
-    plt.savefig('./Data/FIT_EtaC' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.savefig('./Data/FIT_EtaC' + cmapname + '_' + name[0] + '.png', dpi=300)
     
     #3D plot
     fig, ax1 = plt.subplots(subplot_kw={"projection": "3d"})
     surf = ax1.plot_surface(Y, X, Z, cmap=cm.coolwarm, linewidth=0, antialiased=True)
     ax1.view_init(elev=elevation, azim=azimuth)
     fig.colorbar(surf, shrink=0.5, aspect=5)
-    plt.savefig('./Data/FIT_3D_Map' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.savefig('./Data/FIT_3D_Map' + cmapname + '_' + name[0] + '.png', dpi=300)
     plt.show()
     toc4 = time.perf_counter()
 
@@ -278,15 +334,13 @@ def Interpolate_plot(df,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     print(f"Export csv: {toc3-tic:0.4f}sec")
     print(f"Plot results: {toc4-tic:0.4f}sec")
 
-#============================OPTION 2 =========================================
+
+
+    #============================OPTION 2 =========================================
 #=====================Plotting with meshgrid method============================
 #==============================================================================
-def all_datas_plot(cmap,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax,elevation,azimuth):
+def all_datas_plot(cmap,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azimuth):
     df=cmap
-    datax1=data1['WC']
-    datay1=data1['PRC']
-    datax2=data2['WC']
-    datay2=data2['PRC']
     df['spdline']=df.groupby('NC').ngroup()
     rpmgrp=df.groupby('spdline')
     nmax=rpmgrp.ngroups
@@ -297,7 +351,7 @@ def all_datas_plot(cmap,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
       
     #plot setting
     plt.figure(0)
-    plt.title("Compressor Map_"  + cmapname + '_' + name1 + '_' + name2)
+    plt.title("Compressor Map_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('PRC [-]')
     plt.axis ([0,xlim,ylmin,ylmax])
@@ -305,7 +359,7 @@ def all_datas_plot(cmap,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     plt.yticks(np.arange(ylmin, ylmax, (ylmax-ylmin)/20))
     
     plt.figure(1)
-    plt.title("Flow-EtaC_"  + cmapname + '_' + name1 + '_' + name2)
+    plt.title("Flow-EtaC_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('EtaC [-]')
     plt.axis ([0,xlim,etamin,etamax])
@@ -313,7 +367,7 @@ def all_datas_plot(cmap,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     plt.yticks(np.arange(etamin,etamax, (etamax-etamin)/20))
     
     plt.figure(2)
-    plt.title("Flow-PRC_"  + cmapname + '_' + name1 + '_' + name2)
+    plt.title("Flow-PRC_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('PRC [-]')
     plt.axis ([0,xlim,ylmin,ylmax])
@@ -389,18 +443,23 @@ def all_datas_plot(cmap,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     plt.plot(chokelinex, chokeliney,"midnightblue", label = 'GS Chokeline', linewidth=4)   
     
     #plot datas
-    plt.plot(datax1, datay1,color1, label = name1, linewidth=1)
-    plt.plot(datax2, datay2,color2, label = name2, linewidth=1)
+    k=0
+    for datas in data:
+        dat = csv_df(data[k])
+        col = color[k]
+        plt.plot(dat['WC'], dat['PRC'],color[k], label = name[k], linewidth=2)
+        k+=1    
     plt.legend()
-    plt.savefig('./Data/CMaP' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.savefig('./Data/FIT_CMaP' + cmapname + '_' + name[0] + '.png', dpi=300)
+    
     
     plt.figure(1)
     plt.legend
-    plt.savefig('./Data/EtaC' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.savefig('./Data/EtaC' + cmapname + '_' + name[0] + '.png', dpi=300)
     
     plt.figure(2)
     plt.legend
-    plt.savefig('./Data/PRC' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.savefig('./Data/PRC' + cmapname + '_' + name[0] + '.png', dpi=300)
 
     
     #3D plot
@@ -408,40 +467,36 @@ def all_datas_plot(cmap,data1,data2,color1,color2,xlim,ylmin,ylmax,etamin,etamax
     surf = ax1.plot_surface(Y, X, Z1, cmap=cm.coolwarm, linewidth=0, antialiased=True)
     ax1.view_init(elev=elevation, azim=azimuth)
     fig.colorbar(surf, shrink=0.5, aspect=5)
-    plt.savefig('./Data/3D_Map' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.savefig('./Data/3D_Map' + cmapname + '_' + name[0] + '.png', dpi=300)
     plt.show()
         
     fig, ax2 = plt.subplots(subplot_kw={"projection": "3d"})
     surf2 = ax2.plot_trisurf(Y.ravel(), X.ravel(), Z2_Trisurf, cmap=cm.coolwarm, edgecolor='none')
     ax2.view_init(elev=elevation, azim=azimuth)
     fig.colorbar(surf, shrink=0.5, aspect=5)
-    plt.savefig('./Data/3D_Map_Trisurf' + cmapname + '_' + name1 + '_' + name2 + '.png', dpi=300)
+    plt.savefig('./Data/3D_Map_Trisurf' + cmapname + '_' + name[0] + '.png', dpi=300)
     plt.show()
 
-#======================INPUT DATA SETTINGS==========================
-#specify data names
-#cmapname = "SampleCMAP"  #map name
-cmapname = "cmap_1_input"  #map name
 
-cmap1 = "SampleCMAP" #.csv file for compressor map
-cmap2 = "cmap_1_input" #.csv file for compressor map
-name1 = "LugLine1" #.csv file for 1st data set
-name2 = "LugLine2" #.csv file for 2nd data set
-name3 = "null"
-color1 = "red" #plotting color for 1st data set
-color2 = "orange" #plotting color for 2nd data set
+
+    #======================INPUT DATA SETTINGS==========================
+#specify data names
+cmapname = "SampleCMAP"  #map name
+#cmapname = "cmap_2"  #.txt map name
+#cmap_n = "cmap_2" #.csv file for compressor map
+name = ['LugLine1','LugLine2'] #.csv file for data sets (list)
+color = ['red','blue'] #plotting color for data sets (list)
 
 #===============Option 1 (Curve fit Plotting)====================
-#curvefit_plot(map_array(cmapname),csv_df(name1),csv_df(name2),color1, color2, 0.4,0.8,4.0,0.4,0.8) 
-#Syntax: map name, 1st dataset, 2nd dataset, color1, color2, xrange(air flow max), yrange(PRCmin, PRCmax), yrange(etamin,etamax)3D (elevation, azimuth), pitch(no. for interpolation)
+#DEFAULT INPUT: Interpolate_plot(map_array(cmapname),name,color, 0.4,0.8,4.0,0.5,0.8,60,150,50) 
+#Syntax: map name, dataset(list), color(list), xrange(air flow max), yrange(PRCmin, PRCmax), yrange(etamin,etamax)3D (elevation, azimuth), pitch(no. for interpolation)
 
-#Interpolate_plot(map_array(cmapname),csv_df(name1),csv_df(name2),color1, color2, 0.4,0.8,4.0,0.5,0.8,20,150,50) 
-Interpolate_plot(map_csv(cmap2),csv_df(name3),csv_df(name3),color1, color2, 2.0,0.8,12.0,0.5,0.9,20,150,50) 
+Interpolate_plot(map_array(cmapname),name,color, 0.4,0.8,4.0,0.5,0.8,60,150,50) 
 
 
 #===============Option 2 (Discrete Plotting)====================
-#all_datas_plot(map_array(cmapname),csv_df(name1),csv_df(name2),color1, color2, 0.4,0.8,4.0,0.4,0.8,30,120) 
-#Syntax: map name, 1st dataset, 2nd dataset, color1, color2, xrange(air flow max), yrange(PRCmin, PRCmax), yrange(etamin,etamax), 3D (elevation, azimuth)
+#DEFAULT INPUT all_datas_plot(map_csv(cmap1),name,color, 2.0,2.0,12.0,0.6,0.9,20,150) 
+#Syntax: map name, dataset(list), color(list), xrange(air flow max), yrange(PRCmin, PRCmax), yrange(etamin,etamax)3D (elevation, azimuth)
 
-#all_datas_plot(map_csv(cmap1),csv_df(name1),csv_df(name2),color1, color2, 2.0,2.0,12.0,0.6,0.9,20,150) 
+#all_datas_plot(map_csv(cmap_n),name,color, 0.4,0.8,4.0,0.5,0.8,60,150)
 
