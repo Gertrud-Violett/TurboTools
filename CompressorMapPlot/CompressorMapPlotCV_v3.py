@@ -260,10 +260,10 @@ def Interpolate_plot(df,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azim
     Z = interpolate.griddata((y,x),z,(Y,X),method='cubic')
 
     plt.figure(0)
-    plt.contourf(X,Y,Z, 30 ,cmap='bwr',alpha=0.3)
+    plt.contourf(X,Y,Z, 30 ,cmap='bwr',alpha=0.3,levels = np.linspace(etamin, etamax, 30))
     plt.colorbar()
     #plt.imshow(Z, extent=[x.min(),x.max(),y.min(),y.max()], origin='lower' ,cmap='bwr', aspect=0.1)
-    plt.contour(X,Y,Z, 10 ,colors='slategrey') 
+    plt.contour(X,Y,Z, 10 ,colors='slategrey',levels = np.linspace(etamin, etamax, 10)) 
 
     #=========Plotting Others===========
     #Plot map speedlines
