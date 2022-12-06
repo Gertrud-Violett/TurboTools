@@ -234,6 +234,7 @@ def Interpolate_plot(df,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azim
 
     #Plot Settings============================
     plt.figure(0)
+    plt.grid(color='grey')
     plt.title("Compressor Map_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('PRC [-]')
@@ -242,6 +243,7 @@ def Interpolate_plot(df,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azim
     plt.yticks(np.arange(ylmin, ylmax, (ylmax-ylmin)/20))
     
     plt.figure(1)
+    plt.grid(color='grey')
     plt.title("Flow-EtaC_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('EtaC [-]')
@@ -351,6 +353,7 @@ def all_datas_plot(cmap,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azim
       
     #plot setting
     plt.figure(0)
+    plt.grid(color='grey')
     plt.title("Compressor Map_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('PRC [-]')
@@ -359,6 +362,7 @@ def all_datas_plot(cmap,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azim
     plt.yticks(np.arange(ylmin, ylmax, (ylmax-ylmin)/20))
     
     plt.figure(1)
+    plt.grid(color='grey')
     plt.title("Flow-EtaC_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('EtaC [-]')
@@ -367,6 +371,7 @@ def all_datas_plot(cmap,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azim
     plt.yticks(np.arange(etamin,etamax, (etamax-etamin)/20))
     
     plt.figure(2)
+    plt.grid(color='grey')
     plt.title("Flow-PRC_"  + cmapname + '_' + name[0])
     plt.xlabel('Air Flow [kg/s]')
     plt.ylabel('PRC [-]')
@@ -484,7 +489,7 @@ def all_datas_plot(cmap,data,color,xlim,ylmin,ylmax,etamin,etamax,elevation,azim
 cmapname = "SampleCMAP"  #map name
 #cmapname = "cmap_2"  #.txt map name
 #cmap_n = "cmap_2" #.csv file for compressor map
-name = ['LugLine1','LugLine2'] #.csv file for data sets (list)
+name = ['null','null'] #.csv file for data sets (list)
 color = ['red','blue'] #plotting color for data sets (list)
 
 #===============Option 1 (Curve fit Plotting)====================
